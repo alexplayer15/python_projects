@@ -6,12 +6,16 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine, MetaData
 import seaborn as sns
+import os
+from dotenv import load_dotenv
 
-engine = create_engine('postgresql://postgres:password@winhost:5432/gladiator_data')
+load_dotenv()
+
+db_url = os.getenv("DB_URL")
+engine = create_engine(db_url)
 connection = engine.connect()
 query = "SELECT * FROM gladiator_data LIMIT 10000;"
 gladiator_data = pd.read_sql(query,connection)
-
 metadata = MetaData()
 metadata.reflect(bind=engine)
 
@@ -31,8 +35,8 @@ def eda(db,column):
 
 eda(gladiator_data,'age')
 
-query_histogram = "SELECT * FROM gladiator_data LIMIT 100;"
-gladiator_data_histogram = pd.read_sql(query_histogram,connection)
+# query_histogram = "SELECT * FROM gladiator_data LIMIT 100;"
+# gladiator_data_histogram = pd.read_sql(query_histogram,connection)
 
 # def histogram(db,xaxis,yaxis,title):
 
@@ -55,25 +59,25 @@ gladiator_data_histogram = pd.read_sql(query_histogram,connection)
 
 # histogram(gladiator_data_histogram,'age','Number of Gladiators at Height','Distribution of Gladiator Height')
 
-query_x_y_plot = "SELECT age, COUNT(*) AS count_survived FROM ( SELECT * FROM gladiator_data	WHERE survived = TRUE LIMIT 100000) AS subquery GROUP BY age ORDER BY age"
-gladiator_data_x_y_plot = pd.read_sql(query_x_y_plot,connection)
+# query_x_y_plot = "SELECT age, COUNT(*) AS count_survived FROM ( SELECT * FROM gladiator_data	WHERE survived = TRUE LIMIT 100000) AS subquery GROUP BY age ORDER BY age"
+# gladiator_data_x_y_plot = pd.read_sql(query_x_y_plot,connection)
 
-def x_y_plot(db,xaxis,yaxis):
+# def x_y_plot(db,xaxis,yaxis):
 
-    if xaxis == "weapon_of_choice":
-        db['weapon_of_choice'] = db['weapon_of_choice'].apply(lambda x: x.strip("()"))
+#     if xaxis == "weapon_of_choice":
+#         db['weapon_of_choice'] = db['weapon_of_choice'].apply(lambda x: x.strip("()"))
 
-    xaxis = db[xaxis]
-    yaxis = db[yaxis]
+#     xaxis = db[xaxis]
+#     yaxis = db[yaxis]
 
-    plt.plot(xaxis,yaxis)
-    plt.xlabel('Weapon of Choice')
-    plt.ylabel('number survived with weapon')
-    plt.title('Number of Gladiators Who Survived Using Different Weapons')
-    plt.legend()
-    plt.show()
+#     plt.plot(xaxis,yaxis)
+#     plt.xlabel('Weapon of Choice')
+#     plt.ylabel('number survived with weapon')
+#     plt.title('Number of Gladiators Who Survived Using Different Weapons')
+#     plt.legend()
+#     plt.show()
 
-x_y_plot(gladiator_data_x_y_plot,'age','count_survived')
+# x_y_plot(gladiator_data_x_y_plot,'age','count_survived')
 
 # query_pair_plot = "SELECT * FROM gladiator_data LIMIT 10000;"
 # gladiator_data_pair_plot = pd.read_sql(query_pair_plot,connection)
