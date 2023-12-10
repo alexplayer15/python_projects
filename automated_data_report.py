@@ -6,8 +6,12 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine, MetaData
 import os
+from dotenv import load_dotenv
 
-engine = create_engine('postgresql://postgres:password@winhost:5432/gladiator_data')
+load_dotenv()
+
+db_url = os.getenv("DB_URL")
+engine = create_engine(db_url)
 connection = engine.connect()
 
 metadata = MetaData()
@@ -28,7 +32,6 @@ def x_y_plot(db,xaxis,yaxis):
     plt.xlabel('Age of Gladiators')
     plt.ylabel('Number of Gladiators Who Survived at Age')
     plt.title('Number of Gladiatos Who Survived at Different Ages')
-    plt.legend()
     plt.savefig('x_y_plots/age_vs_survived')
     plt.close()
 
@@ -79,3 +82,5 @@ file_path = os.path.join(folder_path,file_name)
 
 with open(file_path, 'w') as file:
     file.write(generate_report(gladiator_data,'age'))
+
+#test
